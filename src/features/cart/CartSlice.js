@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { asyncCount } from "../../api/counter";
 import cartItems from "../../cartItems";
 
 const initialState = {
@@ -15,8 +16,8 @@ const cartSlice = createSlice({
       //   state.cartItems = [];
       return { cartItems: [], amount: 0, total: 0 };
     },
-    removeItem: (state, action) => {
-      const itemId = action.payload;
+    removeItem: (state, { payload }) => {
+      const itemId = payload;
       state.cartItems = state.cartItems.filter(
         (cartItem) => cartItem.id !== itemId
       );
@@ -46,6 +47,16 @@ const cartSlice = createSlice({
   },
 });
 
+const addAsync = (payload) => {
+  return async (dispatch, getState) => {
+    const response = await asyncCount(payload);
+    dispatch(clearCart(response.data));
+  };
+};
+
 export const { clearCart, removeItem, increase, decrease, caluculateTotals } =
   cartSlice.actions;
+
+export { addAsync };
+
 export default cartSlice.reducer;
